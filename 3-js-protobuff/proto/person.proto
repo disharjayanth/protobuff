@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option go_package = "github.com/protocolbuffers/protobuf/examples/go/tutorialpb";
+
+message Person {
+    string first_name = 1;
+    string last_name = 2;
+    int32 age = 3;
+    repeated string hobbies = 4;
+}

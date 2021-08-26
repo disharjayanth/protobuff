@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package example.enumeration;
 
-option go_package = "src/enumpb";
+option go_package = "/enumpb";
 
 message EnumMessage {
     int32 id = 1;

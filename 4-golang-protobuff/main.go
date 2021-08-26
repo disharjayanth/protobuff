@@ -2,16 +2,55 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 
 	"github.com/disharjayanth/protobuff/tree/main/4-golang-protobuff/src/simple/simplepb"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
-	fmt.Println("Hello world!")
-	doSimple()
+	sm := doSimple()
+	var sm2 simplepb.SimpleMessage
+
+	writeToFile("simple.bin", sm)
+	readFromFile("simple.bin", &sm2)
+
+	fmt.Println("sm2:", sm2)
 }
 
-func doSimple() {
+func writeToFile(fname string, pb proto.Message) error {
+	out, err := proto.Marshal(pb)
+	if err != nil {
+		log.Fatalln("Can't serialize to bytes:", err)
+		return err
+	}
+
+	if err := ioutil.WriteFile(fname, out, 0644); err != nil {
+		log.Fatalln("Can't write to file:", err)
+		return err
+	}
+
+	fmt.Println("Date has been written.")
+	return nil
+}
+
+func readFromFile(fname string, pb proto.Message) error {
+	in, err := ioutil.ReadFile(fname)
+	if err != nil {
+		log.Fatalln("Something went wrong when reading from file:", err)
+		return err
+	}
+
+	if err := proto.Unmarshal(in, pb); err != nil {
+		log.Fatalln("Error putting slice of bytes into protocol buffer message struct:", err)
+		return err
+	}
+
+	return nil
+}
+
+func doSimple() *simplepb.SimpleMessage {
 	sm := simplepb.SimpleMessage{
 		Id:         1234,
 		IsSimple:   true,
@@ -26,4 +65,6 @@ func doSimple() {
 	fmt.Println(sm)
 
 	fmt.Println("Id:", sm.GetId())
+
+	return &sm
 }

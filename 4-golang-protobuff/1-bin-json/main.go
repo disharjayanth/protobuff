@@ -6,17 +6,51 @@ import (
 	"log"
 
 	"github.com/disharjayanth/protobuff/tree/main/4-golang-protobuff/src/simple/simplepb"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
 
 func main() {
 	sm := doSimple()
+
+	readAndWriteDemo(sm)
+
+	jsonDemo(sm)
+}
+
+func jsonDemo(sm proto.Message) {
+	smToString := toJSON(sm)
+	fmt.Println("JSON sm:", smToString)
+
+	sm2 := &simplepb.SimpleMessage{}
+	fromJSON(smToString, sm2)
+	fmt.Println("sm2 PB struct:", sm2)
+}
+
+func readAndWriteDemo(sm proto.Message) {
 	var sm2 simplepb.SimpleMessage
 
 	writeToFile("simple.bin", sm)
 	readFromFile("simple.bin", &sm2)
 
 	fmt.Println("sm2:", sm2)
+}
+
+func fromJSON(in string, pb proto.Message) {
+	sb := []byte(in)
+	if err := protojson.Unmarshal(sb, pb); err != nil {
+		log.Fatalln("Error while converting JSON string to PB struct:", err)
+	}
+
+}
+
+func toJSON(pb proto.Message) string {
+	b, err := protojson.Marshal(pb)
+	if err != nil {
+		log.Fatalln("Error while converting proto to JSON string:", err)
+		return err.Error()
+	}
+	return string(b)
 }
 
 func writeToFile(fname string, pb proto.Message) error {

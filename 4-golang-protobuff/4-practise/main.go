@@ -28,6 +28,7 @@ func main() {
 	fmt.Println("To go time:")
 	pbTime := abm2.People[0].LastUpdated
 	fmt.Println(pbTime.AsTime().Format("Mon Jan 2 15:04:05 MST 2006"))
+	fmt.Println(pbTime.AsTime().Local().Format("Mon Jan 2 03:04:05PM IST 2006"))
 }
 
 func update(abm addresspb.AddressBook) {

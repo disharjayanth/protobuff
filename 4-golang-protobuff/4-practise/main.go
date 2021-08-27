@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/disharjayanth/protobuff/tree/main/4-golang-protobuff/4-practise/proto/addresspb"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func main() {
@@ -19,6 +21,18 @@ func main() {
 	abm2 := &addresspb.AddressBook{}
 	readFromDisk("serialize.bin", abm2)
 	fmt.Println("abm2:", abm2)
+
+	update(*abm2)
+
+	fmt.Println("Formatting time:", abm2.People[0].LastUpdated)
+	fmt.Println("To go time:")
+	pbTime := abm2.People[0].LastUpdated
+	fmt.Println(pbTime.AsTime().Format("Mon Jan 2 15:04:05 MST 2006"))
+}
+
+func update(abm addresspb.AddressBook) {
+	abm.People[0].Name = "Ramesh"
+	fmt.Println("updated abm:", abm)
 }
 
 func writeToDisk(fname string, abm proto.Message) {
@@ -59,6 +73,7 @@ func getAddressBook() *addresspb.AddressBook {
 						Type:   addresspb.Person_WORK,
 					},
 				},
+				LastUpdated: timestamppb.New(time.Now()),
 			},
 			&addresspb.Person{
 				Name:  "Shiva",
@@ -74,6 +89,7 @@ func getAddressBook() *addresspb.AddressBook {
 						Type:   addresspb.Person_HOME,
 					},
 				},
+				LastUpdated: timestamppb.New(time.Now()),
 			},
 		},
 	}
